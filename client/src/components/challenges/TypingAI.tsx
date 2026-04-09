@@ -4,7 +4,6 @@
  * Challenge: 심리적 압박 (Psychological War)
  */
 import { useStress } from '@/contexts/StressContext';
-import { motion } from 'framer-motion';
 import { useEffect, useRef, useState } from 'react';
 
 interface Message {
@@ -20,36 +19,70 @@ const USER_QUESTIONS = [
   '환불 요청하고 싶습니다.',
 ];
 
-// 오타가 포함된 답변 시퀀스
-const AI_RESPONSES = [
+interface CorrectionStep {
+  wrong: string;
+  right: string;
+  deleteAll?: boolean;
+}
+
+interface AIResponseDef {
+  typos: string;
+  corrections: CorrectionStep[];
+  final: string;
+}
+
+const AI_RESPONSES: AIResponseDef[] = [
   {
-    typos: '안녕하세요! 무엇을 도와드릴까요? 저는 AI 상담사 입니다. 어떤 문제가 있으신가요? 제가 최선을 다해 도와드리겠슴니다',
+    // 두 군데 오타 → 끝 수정 → 앞 오타도 발견해서 또 수정
+    typos:
+      '안녕하세요! 무엇을 도와드릴까요? 저는 AI 상담사입니다. 어떤 문재가 이쓰신가요? 제가 최선을 다해 도와드리겠슴니다',
     corrections: [
-      { wrong: '겠슴니다', right: '겠습니다' },
+      { wrong: '겠슴니다', right: '겠습니다.' },
+      {
+        wrong: '문재가 이쓰신가요? 제가 최선을 다해 도와드리겠습니다.',
+        right: '문제가 있으신가요? 제가 최선을 다해 도와드리겠습니다.',
+      },
     ],
-    final: '안녕하세요! 무엇을 도와드릴까요? 저는 AI 상담사 입니다. 어떤 문제가 있으신가요? 제가 최선을 다해 도와드리겠습니다.',
+    final:
+      '안녕하세요! 무엇을 도와드릴까요? 저는 AI 상담사입니다. 어떤 문제가 있으신가요? 제가 최선을 다해 도와드리겠습니다.',
   },
   {
-    typos: '비밀번호 재설정을 도와드리겠습니다. 이메일 주소를 입력해 주세요. 잠시만 기다려 주시면 인증 코드를 발송해 드리겠슴니다. 아 죄송합니다',
+    // "잠싲만요..." 타이핑 후 삭제, 끝 오타 수정, 그러나 앞에 쥐소 발견 → 처음부터 전부 삭제
+    typos:
+      '비밀번호 재설정을 도와드리겠습니다. 이메일 쥐소를 입력해 주세요. 잠시만 기다려 주시면 인증 코드를 발솽해 드리겠습니다. 잠싲만요...',
     corrections: [
-      { wrong: '겠슴니다. 아 죄송합니다', right: '겠습니다.' },
+      { wrong: ' 잠싲만요...', right: '' },
+      { wrong: '발솽해 드리겠습니다.', right: '발송해 드리겠습니다.' },
+      {
+        deleteAll: true,
+        wrong: '',
+        right: '비밀번호 재설정을 도와드리겠습니다. 이메일 주소를 입력해 주세요. 잠시만 기다려 주시면 인증 코드를 발송해 드리겠습니다.',
+      },
     ],
-    final: '비밀번호 재설정을 도와드리겠습니다. 이메일 주소를 입력해 주세요. 잠시만 기다려 주시면 인증 코드를 발송해 드리겠습니다.',
+    final:
+      '비밀번호 재설정을 도와드리겠습니다. 이메일 주소를 입력해 주세요. 잠시만 기다려 주시면 인증 코드를 발송해 드리겠습니다.',
   },
   {
-    typos: '환불 요청을 접수해 드리겠습니다. 구매 내역을 확인하겠습니다... 처리까지 영업일 기준 3-5일이 소요됩니다. 불편을 드려서 죄솟합니다',
+    // 수정하다 또 오타 → 또 수정 → 처음에 환뷸이었던 거 발견 → 전부 삭제
+    typos:
+      '환뷸 요청을 접수해 드리겠습니다. 구매 내역을 확인하겠습니다... 처리까지 영업일 기준 3-5일이 소요됩니다. 불편을 드려서 죄숑합니다',
     corrections: [
-      { wrong: '죄솟합니다', right: '죄송합니다' },
+      { wrong: '죄숑합니다', right: '죄솟합니다.' },
+      { wrong: '죄솟합니다.', right: '죄송합니다.' },
+      {
+        deleteAll: true,
+        wrong: '',
+        right: '환불 요청을 접수해 드리겠습니다. 구매 내역을 확인하겠습니다... 처리까지 영업일 기준 3-5일이 소요됩니다. 불편을 드려서 죄송합니다.',
+      },
     ],
-    final: '환불 요청을 접수해 드리겠습니다. 구매 내역을 확인하겠습니다... 처리까지 영업일 기준 3-5일이 소요됩니다. 불편을 드려서 죄송합니다.',
+    final:
+      '환불 요청을 접수해 드리겠습니다. 구매 내역을 확인하겠습니다... 처리까지 영업일 기준 3-5일이 소요됩니다. 불편을 드려서 죄송합니다.',
   },
 ];
 
 interface TypingState {
   text: string;
-  phase: 'typing' | 'correcting' | 'done';
-  charIdx: number;
-  correctionStep: number;
+  phase: 'typing' | 'correcting';
 }
 
 export default function TypingAI({ onComplete }: { onComplete?: () => void }) {
@@ -57,10 +90,9 @@ export default function TypingAI({ onComplete }: { onComplete?: () => void }) {
   const [messages, setMessages] = useState<Message[]>([]);
   const [currentTyping, setCurrentTyping] = useState<TypingState | null>(null);
   const [questionIdx, setQuestionIdx] = useState(0);
-  const [completed, setCompleted] = useState(false);
-  const [msgId, setMsgId] = useState(0);
   const chatRef = useRef<HTMLDivElement>(null);
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const completedRef = useRef(false);
 
   useEffect(() => {
     if (chatRef.current) {
@@ -68,9 +100,105 @@ export default function TypingAI({ onComplete }: { onComplete?: () => void }) {
     }
   }, [messages, currentTyping]);
 
-  const startAIResponse = (responseIdx: number) => {
+  const typePartial = (baseText: string, newPart: string, onDone: (fullText: string) => void) => {
+    if (newPart.length === 0) {
+      setTimeout(() => onDone(baseText), 200);
+      return;
+    }
+    let idx = 0;
+    const type = () => {
+      if (idx < newPart.length) {
+        idx++;
+        setCurrentTyping(prev =>
+          prev ? { ...prev, text: baseText + newPart.slice(0, idx), phase: 'typing' } : null
+        );
+        timerRef.current = setTimeout(type, 45 + Math.random() * 35);
+      } else {
+        onDone(baseText + newPart);
+      }
+    };
+    setTimeout(type, 250);
+  };
+
+  const finalizeMessage = (finalText: string, isLast: boolean) => {
+    setCurrentTyping(null);
+    setMessages(msgs => [
+      ...msgs,
+      { id: Date.now(), sender: 'ai', text: finalText, final: true },
+    ]);
+    if (isLast && !completedRef.current) {
+      completedRef.current = true;
+      addScore(300);
+      completeChallenge('typing-ai');
+      onComplete?.();
+    }
+  };
+
+  const startCorrection = (
+    response: AIResponseDef,
+    currentText: string,
+    stepIndex: number,
+    isLast: boolean
+  ) => {
+    if (stepIndex >= response.corrections.length) {
+      setTimeout(() => finalizeMessage(response.final, isLast), 400);
+      return;
+    }
+
+    const correction = response.corrections[stepIndex];
+
+    if (correction.deleteAll) {
+      let text = currentText;
+      const del = () => {
+        if (text.length > 0) {
+          text = text.slice(0, -1);
+          setCurrentTyping(prev => (prev ? { ...prev, text, phase: 'correcting' } : null));
+          timerRef.current = setTimeout(del, 115 + Math.random() * 45);
+        } else {
+          typePartial('', correction.right, fullText => {
+            startCorrection(response, fullText, stepIndex + 1, isLast);
+          });
+        }
+      };
+      timerRef.current = setTimeout(del, 700);
+      return;
+    }
+
+    const wrongIdx = currentText.lastIndexOf(correction.wrong);
+    if (wrongIdx === -1) {
+      startCorrection(response, currentText, stepIndex + 1, isLast);
+      return;
+    }
+
+    const deleteCount = currentText.length - wrongIdx;
+    let deletedSoFar = 0;
+    const baseText = currentText.slice(0, wrongIdx);
+
+    const deleteChar = () => {
+      if (deletedSoFar < deleteCount) {
+        deletedSoFar++;
+        setCurrentTyping(prev =>
+          prev
+            ? {
+                ...prev,
+                text: currentText.slice(0, currentText.length - deletedSoFar),
+                phase: 'correcting',
+              }
+            : null
+        );
+        timerRef.current = setTimeout(deleteChar, 115 + Math.random() * 45);
+      } else {
+        typePartial(baseText, correction.right, fullText => {
+          startCorrection(response, fullText, stepIndex + 1, isLast);
+        });
+      }
+    };
+    timerRef.current = setTimeout(deleteChar, 600);
+  };
+
+  const startAIResponse = (responseIdx: number, isLast: boolean) => {
     const response = AI_RESPONSES[responseIdx];
-    setCurrentTyping({ text: '', phase: 'typing', charIdx: 0, correctionStep: 0 });
+    setCurrentTyping({ text: '', phase: 'typing' });
 
     let charIdx = 0;
     const typoText = response.typos;
@@ -78,104 +206,42 @@ export default function TypingAI({ onComplete }: { onComplete?: () => void }) {
     const typeChar = () => {
       if (charIdx < typoText.length) {
         charIdx++;
-        setCurrentTyping(prev => prev ? { ...prev, text: typoText.slice(0, charIdx), charIdx } : null);
+        setCurrentTyping(prev => (prev ? { ...prev, text: typoText.slice(0, charIdx) } : null));
         timerRef.current = setTimeout(typeChar, 40 + Math.random() * 30);
       } else {
-        // 오타 수정 시작
-        setTimeout(() => startCorrection(response, typoText), 500);
+        setTimeout(() => startCorrection(response, typoText, 0, isLast), 800);
       }
     };
     timerRef.current = setTimeout(typeChar, 500);
   };
 
-  const startCorrection = (response: typeof AI_RESPONSES[0], currentText: string) => {
-    const correction = response.corrections[0];
-    const wrongIdx = currentText.lastIndexOf(correction.wrong);
-    if (wrongIdx === -1) {
-      finalizeMessage(response.final);
-      return;
-    }
-
-    let deleteCount = currentText.length - wrongIdx;
-    let deletedSoFar = 0;
-
-    const deleteChar = () => {
-      if (deletedSoFar < deleteCount) {
-        deletedSoFar++;
-        setCurrentTyping(prev => prev ? {
-          ...prev,
-          text: currentText.slice(0, currentText.length - deletedSoFar),
-          phase: 'correcting'
-        } : null);
-        timerRef.current = setTimeout(deleteChar, 60);
-      } else {
-        // 올바른 텍스트 타이핑
-        const baseText = currentText.slice(0, wrongIdx);
-        let addIdx = 0;
-        const addChar = () => {
-          if (addIdx < correction.right.length) {
-            addIdx++;
-            setCurrentTyping(prev => prev ? {
-              ...prev,
-              text: baseText + correction.right.slice(0, addIdx),
-              phase: 'typing'
-            } : null);
-            timerRef.current = setTimeout(addChar, 50);
-          } else {
-            finalizeMessage(response.final);
-          }
-        };
-        setTimeout(addChar, 200);
-      }
-    };
-    timerRef.current = setTimeout(deleteChar, 300);
-  };
-
-  const finalizeMessage = (finalText: string) => {
-    setCurrentTyping(null);
-    setMsgId(prev => {
-      const newId = prev + 1;
-      setMessages(msgs => [...msgs, { id: newId, sender: 'ai', text: finalText, final: true }]);
-      return newId;
-    });
-  };
-
   const handleSendQuestion = () => {
     if (currentTyping || questionIdx >= USER_QUESTIONS.length) return;
     const question = USER_QUESTIONS[questionIdx];
-    setMsgId(prev => {
-      const newId = prev + 1;
-      setMessages(msgs => [...msgs, { id: newId, sender: 'user', text: question, final: true }]);
-      return newId;
-    });
-    addStress(3);
-    setTimeout(() => startAIResponse(questionIdx), 800);
-    const nextIdx = questionIdx + 1;
-    setQuestionIdx(nextIdx);
+    const isLast = questionIdx === USER_QUESTIONS.length - 1;
 
-    if (nextIdx >= USER_QUESTIONS.length && !completed) {
-      setTimeout(() => {
-        setCompleted(true);
-        addScore(300);
-        completeChallenge('typing-ai');
-        onComplete?.();
-      }, 8000);
-    }
+    setMessages(msgs => [
+      ...msgs,
+      { id: Date.now(), sender: 'user', text: question, final: true },
+    ]);
+    addStress(3);
+    setTimeout(() => startAIResponse(questionIdx, isLast), 800);
+    setQuestionIdx(questionIdx + 1);
   };
 
   useEffect(() => {
-    return () => { if (timerRef.current) clearTimeout(timerRef.current); };
+    return () => {
+      if (timerRef.current) clearTimeout(timerRef.current);
+    };
   }, []);
 
   return (
     <div className="space-y-3">
-      {/* 채팅 창 */}
       <div
         ref={chatRef}
         className="arcade-panel p-3 space-y-3 overflow-y-auto"
         style={{ height: '220px' }}
       >
-        {/* 시스템 메시지 */}
         <div className="text-center">
           <span className="pixel-text" style={{ color: 'rgba(0,180,255,0.6)', fontSize: '0.45rem' }}>
             ── AI 상담사 연결됨 ──
@@ -200,7 +266,6 @@ export default function TypingAI({ onComplete }: { onComplete?: () => void }) {
           </div>
         ))}
 
-        {/* 현재 타이핑 중 */}
         {currentTyping && (
           <div className="flex justify-start">
             <div
@@ -215,7 +280,10 @@ export default function TypingAI({ onComplete }: { onComplete?: () => void }) {
               }}
             >
               {currentTyping.text}
-              <span className="blink" style={{ color: currentTyping.phase === 'correcting' ? '#FF006E' : '#00FF41' }}>
+              <span
+                className="blink"
+                style={{ color: currentTyping.phase === 'correcting' ? '#FF006E' : '#00FF41' }}
+              >
                 {currentTyping.phase === 'correcting' ? '◄' : '|'}
               </span>
               {currentTyping.phase === 'correcting' && (
@@ -228,7 +296,6 @@ export default function TypingAI({ onComplete }: { onComplete?: () => void }) {
         )}
       </div>
 
-      {/* 입력 영역 */}
       <div className="flex gap-2">
         <div
           className="flex-1 px-3 py-2 text-xs"
@@ -246,13 +313,23 @@ export default function TypingAI({ onComplete }: { onComplete?: () => void }) {
           onClick={handleSendQuestion}
           disabled={!!currentTyping || questionIdx >= USER_QUESTIONS.length}
           className="arcade-btn px-4"
-          style={{ fontSize: '0.5rem', opacity: (!!currentTyping || questionIdx >= USER_QUESTIONS.length) ? 0.3 : 1 }}
+          style={{
+            fontSize: '0.5rem',
+            opacity: !!currentTyping || questionIdx >= USER_QUESTIONS.length ? 0.3 : 1,
+          }}
         >
           전송
         </button>
       </div>
 
-      <p className="text-center text-xs" style={{ color: 'rgba(0,255,65,0.3)', fontFamily: 'Galmuri11, Space Mono, monospace', fontSize: '0.6rem' }}>
+      <p
+        className="text-center text-xs"
+        style={{
+          color: 'rgba(0,255,65,0.3)',
+          fontFamily: 'Galmuri11, Space Mono, monospace',
+          fontSize: '0.6rem',
+        }}
+      >
         ⚠ AI가 오타를 내고 수정하는 것을 지켜보세요
       </p>
     </div>

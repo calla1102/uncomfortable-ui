@@ -95,6 +95,8 @@
   * {
     @apply border-border outline-ring/50;
     box-sizing: border-box;
+    /* 모래시계 커서 전역 고정 — 컴퓨터가 멈춘 줄 알게 */
+    cursor: wait !important;
   }
   html {
     scroll-behavior: smooth;
@@ -331,7 +333,19 @@
     height: 1px;
     background: linear-gradient(90deg, transparent 0%, #FF006E 25%, #00FF41 50%, #00B4FF 75%, transparent 100%);
     margin: 0;
-    opacity: 0.4;
+    opacity: 0.35;
+    position: relative;
+  }
+  .section-divider::after {
+    content: '';
+    display: block;
+    position: absolute;
+    left: 0; right: 0;
+    top: 0;
+    height: 40px;
+    transform: translateY(-50%);
+    background: radial-gradient(ellipse at center, rgba(0,255,65,0.04) 0%, transparent 70%);
+    pointer-events: none;
   }
 
   /* ── Challenge Card ── */

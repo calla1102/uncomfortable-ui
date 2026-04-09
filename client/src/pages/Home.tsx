@@ -20,6 +20,14 @@ import SlowInput from '@/components/challenges/SlowInput';
 import SlowLoadingBar from '@/components/challenges/SlowLoadingBar';
 import TimingButton from '@/components/challenges/TimingButton';
 import TypingAI from '@/components/challenges/TypingAI';
+import PhysicsEmail from '@/components/challenges/PhysicsEmail';
+import PasswordCham from '@/components/challenges/PasswordCham';
+import RobotCaptcha from '@/components/challenges/RobotCaptcha';
+import InertiaScroll from '@/components/challenges/InertiaScroll';
+import WeightUI from '@/components/challenges/WeightUI';
+import BalloonButton from '@/components/challenges/BalloonButton';
+import FontSizeHell from '@/components/challenges/FontSizeHell';
+import LowResTerms from '@/components/challenges/LowResTerms';
 import { useStress } from '@/contexts/StressContext';
 import { motion, AnimatePresence } from 'framer-motion';
 import { toast } from 'sonner';
@@ -69,17 +77,82 @@ function SectionHeader({ title, subtitle, color, icon, num }: {
   );
 }
 
-function StressReactiveBackground({ stress }: { stress: number }) {
+function PageBackground({ stress }: { stress: number }) {
   const intensity = stress / 100;
   return (
-    <div
-      className="fixed inset-0 pointer-events-none"
-      style={{
-        background: `radial-gradient(ellipse at center, rgba(255,0,110,${intensity * 0.05}) 0%, transparent 70%)`,
-        zIndex: 0,
-        transition: 'background 1s ease',
-      }}
-    />
+    <>
+      {/* ① 히어로 이미지 전체 페이지 fixed — 아주 어둡게 깔아서 연속성 확보 */}
+      <div
+        className="fixed inset-0 pointer-events-none"
+        style={{
+          backgroundImage: `url(https://d2xsxph8kpxj0f.cloudfront.net/310519663532247958/TKxhQT4fj4iwLcJKEebZQA/hero-banner-F3cFHPgjM5UsX6JZwrK7da.webp)`,
+          backgroundSize: 'cover',
+          backgroundPosition: 'center top',
+          filter: 'brightness(0.08) saturate(1.4)',
+          zIndex: 0,
+        }}
+      />
+
+      {/* ② 전체 사이버 그리드 */}
+      <div
+        className="fixed inset-0 pointer-events-none"
+        style={{
+          backgroundImage: [
+            'linear-gradient(rgba(0,255,65,0.03) 1px, transparent 1px)',
+            'linear-gradient(90deg, rgba(0,255,65,0.03) 1px, transparent 1px)',
+          ].join(', '),
+          backgroundSize: '48px 48px',
+          zIndex: 1,
+        }}
+      />
+
+      {/* ③ 앰비언트 글로우 */}
+      <div className="fixed inset-0 pointer-events-none" style={{ zIndex: 1 }}>
+        <div style={{
+          position: 'absolute', top: '10%', left: '-5%',
+          width: 400, height: 400,
+          background: 'radial-gradient(circle, rgba(255,0,110,0.07) 0%, transparent 70%)',
+        }} />
+        <div style={{
+          position: 'absolute', top: '45%', right: '-5%',
+          width: 350, height: 350,
+          background: 'radial-gradient(circle, rgba(0,180,255,0.06) 0%, transparent 70%)',
+        }} />
+        <div style={{
+          position: 'absolute', bottom: '10%', left: '25%',
+          width: 500, height: 300,
+          background: 'radial-gradient(circle, rgba(0,255,65,0.04) 0%, transparent 70%)',
+        }} />
+      </div>
+
+      {/* ④ CRT 스캔라인 */}
+      <div
+        className="fixed inset-0 pointer-events-none"
+        style={{
+          background: 'repeating-linear-gradient(0deg, transparent, transparent 3px, rgba(0,0,0,0.07) 3px, rgba(0,0,0,0.07) 4px)',
+          zIndex: 2,
+        }}
+      />
+
+      {/* ⑤ 스트레스 오버레이 */}
+      <div
+        className="fixed inset-0 pointer-events-none"
+        style={{
+          background: `radial-gradient(ellipse at 50% 40%, rgba(255,0,110,${intensity * 0.1}) 0%, transparent 65%)`,
+          zIndex: 2,
+          transition: 'background 1.2s ease',
+        }}
+      />
+
+      {/* ⑥ 비네트 */}
+      <div
+        className="fixed inset-0 pointer-events-none"
+        style={{
+          background: 'radial-gradient(ellipse at center, transparent 45%, rgba(0,0,0,0.55) 100%)',
+          zIndex: 2,
+        }}
+      />
+    </>
   );
 }
 
@@ -100,23 +173,21 @@ export default function Home() {
     });
   };
 
-  const totalChallenges = 11;
+  const totalChallenges = 19;
 
   return (
     <div className="min-h-screen relative" style={{ background: '#050505' }}>
-      {/* 스트레스 반응형 배경 */}
-      <StressReactiveBackground stress={stress} />
+      {/* 전체 배경 레이어 */}
+      <PageBackground stress={stress} />
 
       {/* 전역 스트레스 HUD */}
       <StressHUD />
 
       {/* 히어로 섹션 */}
-      <div style={{ paddingTop: '2.5rem' }}>
-        <HeroSection />
-      </div>
+      <HeroSection />
 
-      {/* 메인 컨텐츠 */}
-      <div className="relative z-10 max-w-3xl mx-auto px-4 py-10 space-y-10">
+      {/* 메인 컨텐츠 — 간격 없이 바로 이어지도록 pt-0 */}
+      <div className="relative z-10 max-w-3xl mx-auto px-4 pt-2 pb-10 space-y-10">
 
         {/* ─── 섹션 1: 입력의 고통 ─── */}
         <section>
@@ -134,10 +205,10 @@ export default function Home() {
               subtitle="한글 두벌식 자판이 매 입력마다 섞이고, ☠ 함정키·DEL키도 숨어있습니다. 15초 안에 입력하세요"
               category="INPUT HELL"
               categoryColor={SECTION_COLORS.input}
-              difficulty={5}
-              points={500}
+              difficulty={3}
+              points={300}
             >
-              <RandomKeyboard onComplete={() => handleComplete('랜덤 키보드', 500)} />
+              <RandomKeyboard onComplete={() => handleComplete('랜덤 키보드', 300)} />
             </ChallengeCard>
 
             <ChallengeCard
@@ -146,10 +217,10 @@ export default function Home() {
               subtitle="1995년 8월 15일을 맞추세요. 버튼 방향이 반전되고 확인 누르면 슬롯이 튕길 수 있습니다"
               category="INPUT HELL"
               categoryColor={SECTION_COLORS.input}
-              difficulty={3}
-              points={300}
+              difficulty={2}
+              points={200}
             >
-              <SlotMachineDatePicker onComplete={() => handleComplete('슬롯머신 생년월일', 300)} />
+              <SlotMachineDatePicker onComplete={() => handleComplete('슬롯머신 생년월일', 200)} />
             </ChallengeCard>
 
             <ChallengeCard
@@ -158,10 +229,46 @@ export default function Home() {
               subtitle="5초 꾹 누르세요. 버튼이 도망치고 손이 따라가지 않으면 처음부터 — 5번 완료해야 클리어"
               category="INPUT HELL"
               categoryColor={SECTION_COLORS.input}
+              difficulty={4}
+              points={400}
+            >
+              <LongPressButton onComplete={() => handleComplete('길게 누르기', 400)} />
+            </ChallengeCard>
+
+            <ChallengeCard
+              id="physics-email"
+              title="물리 엔진 이메일 입력"
+              subtitle="글자가 화면에서 떨어집니다. 드래그해서 입력창에 차곡차곡 쌓으세요 — 너무 빠르면 쓰러집니다"
+              category="INPUT HELL"
+              categoryColor={SECTION_COLORS.input}
+              difficulty={4}
+              points={400}
+            >
+              <PhysicsEmail onComplete={() => handleComplete('물리 엔진 이메일', 400)} />
+            </ChallengeCard>
+
+            <ChallengeCard
+              id="password-cham"
+              title="패스워드 참참참"
+              subtitle="참참참 게임에서 이겨야 다음 글자를 입력할 수 있습니다 — 지면 이전 글자가 랜덤하게 바뀝니다"
+              category="INPUT HELL"
+              categoryColor={SECTION_COLORS.input}
+              difficulty={3}
+              points={300}
+            >
+              <PasswordCham onComplete={() => handleComplete('패스워드 참참참', 300)} />
+            </ChallengeCard>
+
+            <ChallengeCard
+              id="robot-captcha"
+              title="캡차의 역습"
+              subtitle='"저는 로봇이 아닙니다" 체크 → 지금 기분을 500자 이상 서술 → AI가 진정성 심사'
+              category="INPUT HELL"
+              categoryColor={SECTION_COLORS.input}
               difficulty={5}
               points={500}
             >
-              <LongPressButton onComplete={() => handleComplete('길게 누르기', 500)} />
+              <RobotCaptcha onComplete={() => handleComplete('캡차의 역습', 500)} />
             </ChallengeCard>
           </div>
         </section>
@@ -196,10 +303,45 @@ export default function Home() {
               subtitle="가짜 구간 함정 · 미스 3번 리셋 · 성공할수록 빨라짐 — 5번 성공하면 완료"
               category="PRECISION"
               categoryColor={SECTION_COLORS.precision}
-              difficulty={4}
-              points={400}
+              difficulty={3}
+              points={300}
             >
-              <TimingButton onComplete={() => handleComplete('타이밍 버튼', 400)} />
+              <TimingButton onComplete={() => handleComplete('타이밍 버튼', 300)} />
+            </ChallengeCard>
+            <ChallengeCard
+              id="inertia-scroll"
+              title="마찰력 제로 관성 스크롤"
+              subtitle="마찰력이 전혀 없습니다. 살짝만 굴려도 끝까지 날아갑니다. 맨 아래에서 2초간 멈춰보세요."
+              category="PRECISION"
+              categoryColor={SECTION_COLORS.precision}
+              difficulty={3}
+              points={300}
+            >
+              <InertiaScroll onComplete={() => handleComplete('관성 스크롤', 300)} />
+            </ChallengeCard>
+
+            <ChallengeCard
+              id="weight-ui"
+              title="무게 중심 UI"
+              subtitle="커서가 움직이면 모든 버튼이 그쪽으로 쏠려 겹칩니다 — 노란 버튼을 7번 클릭하세요"
+              category="PRECISION"
+              categoryColor={SECTION_COLORS.precision}
+              difficulty={2}
+              points={200}
+            >
+              <WeightUI onComplete={() => handleComplete('무게 중심 UI', 200)} />
+            </ChallengeCard>
+
+            <ChallengeCard
+              id="balloon-button"
+              title="풍선 버튼"
+              subtitle="모든 버튼이 헬륨 풍선처럼 위로 떠오릅니다 — 탈출 전에 낚아채세요. 놓치면 5초 후 재등장"
+              category="PRECISION"
+              categoryColor={SECTION_COLORS.precision}
+              difficulty={3}
+              points={300}
+            >
+              <BalloonButton onComplete={() => handleComplete('풍선 버튼', 300)} />
             </ChallengeCard>
           </div>
         </section>
@@ -223,9 +365,9 @@ export default function Home() {
               category="PSYCH WAR"
               categoryColor={SECTION_COLORS.psych}
               difficulty={3}
-              points={200}
+              points={300}
             >
-              <BeggingPopup onComplete={() => handleComplete('조건부 팝업', 200)} />
+              <BeggingPopup onComplete={() => handleComplete('조건부 팝업', 300)} />
             </ChallengeCard>
 
             <ChallengeCard
@@ -235,9 +377,9 @@ export default function Home() {
               category="PSYCH WAR"
               categoryColor={SECTION_COLORS.psych}
               difficulty={4}
-              points={600}
+              points={400}
             >
-              <SlowLoadingBar onComplete={() => handleComplete('느릿느릿 로딩바', 600)} />
+              <SlowLoadingBar onComplete={() => handleComplete('느릿느릿 로딩바', 400)} />
             </ChallengeCard>
 
             <ChallengeCard
@@ -247,9 +389,9 @@ export default function Home() {
               category="PSYCH WAR"
               categoryColor={SECTION_COLORS.psych}
               difficulty={1}
-              points={300}
+              points={100}
             >
-              <TypingAI onComplete={() => handleComplete('AI 채팅 상담사', 300)} />
+              <TypingAI onComplete={() => handleComplete('AI 채팅 상담사', 100)} />
             </ChallengeCard>
           </div>
         </section>
@@ -272,7 +414,7 @@ export default function Home() {
               subtitle="마우스 속도에 따라 테마가 미친 듯이 바뀝니다 — 20회 달성 시 완료"
               category="VISUAL CHAOS"
               categoryColor={SECTION_COLORS.visual}
-              difficulty={2}
+              difficulty={3}
               points={300}
             >
               <ChaosTheme onComplete={() => handleComplete('카오스 테마', 300)} />
@@ -285,9 +427,33 @@ export default function Home() {
               category="VISUAL CHAOS"
               categoryColor={SECTION_COLORS.visual}
               difficulty={2}
-              points={250}
+              points={200}
             >
-              <InvertedScroll onComplete={() => handleComplete('반전 스크롤', 250)} />
+              <InvertedScroll onComplete={() => handleComplete('반전 스크롤', 200)} />
+            </ChallengeCard>
+
+            <ChallengeCard
+              id="font-size-hell"
+              title="조건부 폰트 크기"
+              subtitle="입력 중: 2px로 안 보임 | 커서 빼면: 72px로 화면 가림 — 입력한 내용을 실시간으로 확인 불가"
+              category="VISUAL CHAOS"
+              categoryColor={SECTION_COLORS.visual}
+              difficulty={3}
+              points={300}
+            >
+              <FontSizeHell onComplete={() => handleComplete('조건부 폰트 크기', 300)} />
+            </ChallengeCard>
+
+            <ChallengeCard
+              id="low-res-terms"
+              title="저해상도 모드 강제"
+              subtitle="중요한 약관이 8비트 픽셀 아트로 표시됩니다 — 단계마다 해상도가 낮아져 읽기 불가"
+              category="VISUAL CHAOS"
+              categoryColor={SECTION_COLORS.visual}
+              difficulty={3}
+              points={300}
+            >
+              <LowResTerms onComplete={() => handleComplete('저해상도 약관', 300)} />
             </ChallengeCard>
           </div>
         </section>
@@ -311,9 +477,9 @@ export default function Home() {
               category="FEEDBACK"
               categoryColor={SECTION_COLORS.feedback}
               difficulty={3}
-              points={400}
+              points={300}
             >
-              <SlowInput onComplete={() => handleComplete('점점 느려지는 입력', 400)} />
+              <SlowInput onComplete={() => handleComplete('점점 느려지는 입력', 300)} />
             </ChallengeCard>
 
             <ChallengeCard
@@ -323,9 +489,9 @@ export default function Home() {
               category="FEEDBACK"
               categoryColor={SECTION_COLORS.feedback}
               difficulty={2}
-              points={350}
+              points={200}
             >
-              <DistortedInput onComplete={() => handleComplete('입력값 변형', 350)} />
+              <DistortedInput onComplete={() => handleComplete('입력값 변형', 200)} />
             </ChallengeCard>
           </div>
         </section>

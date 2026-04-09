@@ -18,8 +18,42 @@ export default function ChaosTheme({ onComplete }: Props) {
   const [completed, setCompleted] = useState(false);
   const [speed, setSpeed] = useState(0);
   const lastPos = useRef({ x: 0, y: 0, time: 0 });
+  const lastMoveTimeRef = useRef(Date.now());
   const containerRef = useRef<HTMLDivElement>(null);
   const switchCountRef = useRef(0);
+  const completedRef = useRef(false);
+
+  const doSwitch = useCallback((isAuto = false) => {
+    setIsDark(prev => !prev);
+    setSwitchCount(c => {
+      // 10% 확률로 진행 감소
+      const roll = Math.random();
+      const delta = roll < 0.1 ? -1 : 1;
+      const next = Math.max(0, c + delta);
+      switchCountRef.current = next;
+      if (next >= 20 && !completedRef.current) {
+        completedRef.current = true;
+        setCompleted(true);
+        addScore(300);
+        completeChallenge('chaos-theme');
+        onComplete?.();
+      }
+      return next;
+    });
+    addStress(isAuto ? 1 : 2);
+  }, [addStress, addScore, completeChallenge, onComplete]);
+
+  // 마우스가 3초간 멈추면 자동 전환
+  useEffect(() => {
+    const interval = setInterval(() => {
+      if (completedRef.current) return;
+      const now = Date.now();
+      if (now - lastMoveTimeRef.current > 3000) {
+        doSwitch(true);
+      }
+    }, 1000);
+    return () => clearInterval(interval);
+  }, [doSwitch]);
 
   const handleMouseMove = useCallback((e: React.MouseEvent) => {
     const now = Date.now();
@@ -33,24 +67,12 @@ export default function ChaosTheme({ onComplete }: Props) {
 
     setSpeed(Math.round(currentSpeed));
     lastPos.current = { x: e.clientX, y: e.clientY, time: now };
+    lastMoveTimeRef.current = now;
 
-    // 속도가 빠를수록 테마 전환
     if (currentSpeed > 15) {
-      setIsDark(prev => !prev);
-      setSwitchCount(c => {
-        const next = c + 1;
-        switchCountRef.current = next;
-        if (next >= 20 && !completed) {
-          setCompleted(true);
-          addScore(300);
-          completeChallenge('chaos-theme');
-          onComplete?.();
-        }
-        return next;
-      });
-      addStress(2);
+      doSwitch(false);
     }
-  }, [completed, addStress, addScore, completeChallenge, onComplete]);
+  }, [doSwitch]);
 
   const progress = Math.min(100, (switchCount / 20) * 100);
 
@@ -73,22 +95,20 @@ export default function ChaosTheme({ onComplete }: Props) {
       <div
         ref={containerRef}
         onMouseMove={handleMouseMove}
-        className="relative overflow-hidden transition-all duration-100"
+        className="relative overflow-hidden"
         style={{
           height: '200px',
-          background: isDark ? '#050505' : '#F5F5F5',
-          border: `1px solid ${isDark ? '#00FF41' : '#FF006E'}`,
+          background: isDark ? '#050505' : '#FFFFFF',
+          border: `2px solid ${isDark ? '#00FF41' : '#FF0050'}`,
           cursor: 'none',
         }}
       >
-        {/* 내용 */}
         <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 pointer-events-none">
           <p
             className="pixel-text"
             style={{
-              color: isDark ? '#00FF41' : '#000',
+              color: isDark ? '#00FF41' : '#FF0050',
               fontSize: '0.7rem',
-              transition: 'color 0.1s',
             }}
           >
             {isDark ? '🌙 DARK MODE' : '☀️ LIGHT MODE'}
@@ -100,11 +120,10 @@ export default function ChaosTheme({ onComplete }: Props) {
                 key={btn}
                 className="px-3 py-1 pixel-text"
                 style={{
-                  background: isDark ? 'rgba(0,255,65,0.1)' : 'rgba(0,0,0,0.1)',
-                  border: `1px solid ${isDark ? 'rgba(0,255,65,0.3)' : 'rgba(0,0,0,0.3)'}`,
-                  color: isDark ? '#00FF41' : '#000',
+                  background: isDark ? 'rgba(0,255,65,0.1)' : 'rgba(255,0,80,0.12)',
+                  border: `1px solid ${isDark ? 'rgba(0,255,65,0.3)' : 'rgba(255,0,80,0.6)'}`,
+                  color: isDark ? '#00FF41' : '#FF0050',
                   fontSize: '0.45rem',
-                  transition: 'all 0.1s',
                 }}
               >
                 {btn}
@@ -114,24 +133,23 @@ export default function ChaosTheme({ onComplete }: Props) {
 
           <p
             style={{
-              color: isDark ? 'rgba(255,255,255,0.4)' : 'rgba(0,0,0,0.4)',
+              color: isDark ? 'rgba(255,255,255,0.4)' : 'rgba(255,0,80,0.6)',
               fontFamily: 'Galmuri11, Space Mono, monospace',
               fontSize: '0.6rem',
-              transition: 'color 0.1s',
             }}
           >
             마우스 속도: {speed}
           </p>
         </div>
 
-        {/* 전환 플래시 */}
+        {/* 전환 플래시 — opacity 1로 강렬하게 */}
         <motion.div
           key={switchCount}
-          initial={{ opacity: 0.3 }}
+          initial={{ opacity: 1 }}
           animate={{ opacity: 0 }}
-          transition={{ duration: 0.1 }}
+          transition={{ duration: 0.12 }}
           className="absolute inset-0 pointer-events-none"
-          style={{ background: isDark ? '#fff' : '#000' }}
+          style={{ background: isDark ? '#FFFFFF' : '#000000' }}
         />
       </div>
 
