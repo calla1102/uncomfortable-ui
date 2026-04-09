@@ -1,0 +1,16 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(pnpm dev:*)",
+      "Bash(curl -s http://localhost:5173)",
+      "Bash(npx vite:*)",
+      "Bash(curl -s http://localhost:3002)",
+      "Bash(rm -rf /Users/calla20031/uncomfortable-ui/.manus-logs)",
+      "Bash(rm -rf /Users/calla20031/uncomfortable-ui/client/public/__manus__)",
+      "Bash(rm /Users/calla20031/uncomfortable-ui/client/src/components/ManusDialog.tsx)",
+      "Bash(pkill -f \"vite\")",
+      "Bash(find:*)",
+      "Bash(curl -s \"https://cdn.jsdelivr.net/npm/galmuri/dist/galmuri.css\")"
+    ]
+  }
+}
