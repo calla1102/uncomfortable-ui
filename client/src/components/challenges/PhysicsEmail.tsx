@@ -246,7 +246,7 @@ export default function PhysicsEmail({ onComplete }: { onComplete?: () => void }
 
       if (newPlaced.length === TARGET.length && !completedRef.current) {
         completedRef.current = true;
-        addScore(800);
+        addScore(400);
         completeChallenge('physics-email');
         onComplete?.();
       }

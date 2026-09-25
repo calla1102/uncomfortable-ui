@@ -7,6 +7,7 @@
  */
 import { motion, AnimatePresence } from 'framer-motion';
 import { useEffect, useState } from 'react';
+import { TOTAL_CHALLENGES } from '@/data/challenges';
 
 const GLITCH_CHARS = '!@#$%^&*<>?/\\|{}[]ㄱㄴㄷㄹ';
 
@@ -223,7 +224,7 @@ export default function HeroSection() {
           className="flex gap-8 sm:gap-12"
         >
           {[
-            { label: 'CHALLENGES', value: '11', color: '#00FF41' },
+            { label: 'CHALLENGES', value: String(TOTAL_CHALLENGES), color: '#00FF41' },
             { label: 'STRESS MAX', value: '100%', color: '#FF006E' },
             { label: 'ESCAPE RATE', value: '0%', color: '#00B4FF' },
           ].map(stat => (

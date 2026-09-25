@@ -67,7 +67,7 @@ export default function LongPressButton({ onComplete }: Props) {
           next.add(currentBtn);
           if (next.size >= BUTTONS.length) {
             setAllCompleted(true);
-            addScore(500);
+            addScore(400);
             completeChallenge('long-press');
             onComplete?.();
           } else {

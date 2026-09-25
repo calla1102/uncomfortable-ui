@@ -77,7 +77,7 @@ export default function InertiaScroll({ onComplete }: { onComplete?: () => void 
             if (!completedRef.current) {
               completedRef.current = true;
               setCompleted(true);
-              addScore(400);
+              addScore(300);
               completeChallenge('inertia-scroll');
               onComplete?.();
             }

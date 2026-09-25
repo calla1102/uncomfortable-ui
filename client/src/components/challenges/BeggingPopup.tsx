@@ -93,7 +93,7 @@ export default function BeggingPopup({ onComplete }: Props) {
       clearTimers();
       if (!completed) {
         setCompleted(true);
-        addScore(200);
+        addScore(300);
         completeChallenge('begging-popup');
         onComplete?.();
       }

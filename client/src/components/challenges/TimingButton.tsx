@@ -102,7 +102,7 @@ export default function TimingButton({ onComplete }: Props) {
 
       if (newHits >= REQUIRED_HITS) {
         setCompleted(true);
-        addScore(400);
+        addScore(300);
         completeChallenge('timing-button');
         onComplete?.();
       } else {

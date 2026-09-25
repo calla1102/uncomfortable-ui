@@ -25,7 +25,7 @@ export default function FontSizeHell({ onComplete }: { onComplete?: () => void }
       const next = step + 1;
       if (next >= TARGETS.length && !completedRef.current) {
         completedRef.current = true;
-        addScore(350);
+        addScore(300);
         completeChallenge('font-size-hell');
         setMsg('✓ 완료!');
         onComplete?.();

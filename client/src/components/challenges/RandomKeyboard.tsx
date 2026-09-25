@@ -144,7 +144,7 @@ export default function RandomKeyboard({ onComplete, targetText = '불편함을�
       const text = next.fin + getComposingChar(next.comp);
       if (text === targetText) {
         setCompleted(true);
-        addScore(500);
+        addScore(300);
         completeChallenge('random-keyboard');
         onComplete?.();
       }

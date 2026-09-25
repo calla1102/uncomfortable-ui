@@ -49,7 +49,7 @@ export default function RobotCaptcha({ onComplete }: { onComplete?: () => void }
         setPhase('accepted');
         if (!completedRef.current) {
           completedRef.current = true;
-          addScore(400);
+          addScore(500);
           completeChallenge('robot-captcha');
           onComplete?.();
         }

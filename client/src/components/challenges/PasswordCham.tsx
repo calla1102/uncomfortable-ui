@@ -29,7 +29,7 @@ export default function PasswordCham({ onComplete }: { onComplete?: () => void }
   const revealedRef = useRef(0);
   const displayRef = useRef<string[]>(Array(TARGET.length).fill(''));
   const completedRef = useRef(false);
-  const choiceTimerRef = useRef<ReturnType<typeof setInterval>>();
+  const choiceTimerRef = useRef<ReturnType<typeof setInterval> | undefined>(undefined);
 
   const resolve = (choice: Dir | null) => {
     clearInterval(choiceTimerRef.current);
@@ -53,7 +53,7 @@ export default function PasswordCham({ onComplete }: { onComplete?: () => void }
 
       if (r + 1 === TARGET.length && !completedRef.current) {
         completedRef.current = true;
-        addScore(500);
+        addScore(300);
         completeChallenge('password-cham');
         onComplete?.();
       }

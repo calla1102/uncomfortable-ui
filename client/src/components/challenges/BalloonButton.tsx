@@ -68,7 +68,7 @@ export default function BalloonButton({ onComplete }: { onComplete?: () => void 
       next.add(id);
       if (next.size === LABELS.length && !completedRef.current) {
         completedRef.current = true;
-        addScore(500);
+        addScore(300);
         completeChallenge('balloon-button');
         onComplete?.();
       }

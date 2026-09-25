@@ -58,7 +58,7 @@ export default function WeightUI({ onComplete }: { onComplete?: () => void }) {
     setClickCount(next);
     if (next >= 7 && !completedRef.current) {
       completedRef.current = true;
-      addScore(450);
+      addScore(200);
       completeChallenge('weight-ui');
       onComplete?.();
     } else {

@@ -153,7 +153,7 @@ export default function SlotMachineDatePicker({ onComplete }: Props) {
 
     if (year === TARGET.year && month === TARGET.month && day === TARGET.day) {
       setCompleted(true);
-      addScore(300);
+      addScore(200);
       completeChallenge('slot-date');
       onComplete?.();
     }

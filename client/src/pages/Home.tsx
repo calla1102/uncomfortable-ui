@@ -8,38 +8,12 @@
 import ChallengeCard from '@/components/ChallengeCard';
 import HeroSection from '@/components/HeroSection';
 import StressHUD from '@/components/StressHUD';
-import BeggingPopup from '@/components/challenges/BeggingPopup';
-import ChaosTheme from '@/components/challenges/ChaosTheme';
-import DistortedInput from '@/components/challenges/DistortedInput';
-import EscapeButton from '@/components/challenges/EscapeButton';
-import InvertedScroll from '@/components/challenges/InvertedScroll';
-import LongPressButton from '@/components/challenges/LongPressButton';
-import RandomKeyboard from '@/components/challenges/RandomKeyboard';
-import SlotMachineDatePicker from '@/components/challenges/SlotMachineDatePicker';
-import SlowInput from '@/components/challenges/SlowInput';
-import SlowLoadingBar from '@/components/challenges/SlowLoadingBar';
-import TimingButton from '@/components/challenges/TimingButton';
-import TypingAI from '@/components/challenges/TypingAI';
-import PhysicsEmail from '@/components/challenges/PhysicsEmail';
-import PasswordCham from '@/components/challenges/PasswordCham';
-import RobotCaptcha from '@/components/challenges/RobotCaptcha';
-import InertiaScroll from '@/components/challenges/InertiaScroll';
-import WeightUI from '@/components/challenges/WeightUI';
-import BalloonButton from '@/components/challenges/BalloonButton';
-import FontSizeHell from '@/components/challenges/FontSizeHell';
-import LowResTerms from '@/components/challenges/LowResTerms';
 import { useStress } from '@/contexts/StressContext';
+import { CHALLENGE_SECTIONS, TOTAL_CHALLENGES } from '@/data/challenges';
 import { motion, AnimatePresence } from 'framer-motion';
+import { Fragment } from 'react';
 import { toast } from 'sonner';
 
-const SECTION_COLORS = {
-  input: '#FF006E',
-  precision: '#00B4FF',
-  psych: '#FFE600',
-  visual: '#FF8C00',
-  time: '#00FF41',
-  feedback: '#FF006E',
-};
 
 function SectionHeader({ title, subtitle, color, icon, num }: {
   title: string; subtitle: string; color: string; icon: string; num: string;
@@ -173,7 +147,7 @@ export default function Home() {
     });
   };
 
-  const totalChallenges = 19;
+  const totalChallenges = TOTAL_CHALLENGES;
 
   return (
     <div className="min-h-screen relative" style={{ background: '#050505' }}>
@@ -189,312 +163,36 @@ export default function Home() {
       {/* 메인 컨텐츠 — 간격 없이 바로 이어지도록 pt-0 */}
       <div className="relative z-10 max-w-3xl mx-auto px-4 pt-2 pb-10 space-y-10">
 
-        {/* ─── 섹션 1: 입력의 고통 ─── */}
-        <section>
-          <SectionHeader
-            num="01"
-            title="입력의 고통"
-            subtitle="Input Hell — 타이핑이 이렇게 힘들 줄이야"
-            color={SECTION_COLORS.input}
-            icon="⌨️"
-          />
-          <div className="space-y-2">
-            <ChallengeCard
-              id="random-keyboard"
-              title="랜덤 키보드"
-              subtitle="한글 두벌식 자판이 매 입력마다 섞이고, ☠ 함정키·DEL키도 숨어있습니다. 15초 안에 입력하세요"
-              category="INPUT HELL"
-              categoryColor={SECTION_COLORS.input}
-              difficulty={3}
-              points={300}
-            >
-              <RandomKeyboard onComplete={() => handleComplete('랜덤 키보드', 300)} />
-            </ChallengeCard>
-
-            <ChallengeCard
-              id="slot-date"
-              title="슬롯머신 생년월일"
-              subtitle="1995년 8월 15일을 맞추세요. 버튼 방향이 반전되고 확인 누르면 슬롯이 튕길 수 있습니다"
-              category="INPUT HELL"
-              categoryColor={SECTION_COLORS.input}
-              difficulty={2}
-              points={200}
-            >
-              <SlotMachineDatePicker onComplete={() => handleComplete('슬롯머신 생년월일', 200)} />
-            </ChallengeCard>
-
-            <ChallengeCard
-              id="long-press"
-              title="길게 눌러야 입력됨"
-              subtitle="5초 꾹 누르세요. 버튼이 도망치고 손이 따라가지 않으면 처음부터 — 5번 완료해야 클리어"
-              category="INPUT HELL"
-              categoryColor={SECTION_COLORS.input}
-              difficulty={4}
-              points={400}
-            >
-              <LongPressButton onComplete={() => handleComplete('길게 누르기', 400)} />
-            </ChallengeCard>
-
-            <ChallengeCard
-              id="physics-email"
-              title="물리 엔진 이메일 입력"
-              subtitle="글자가 화면에서 떨어집니다. 드래그해서 입력창에 차곡차곡 쌓으세요 — 너무 빠르면 쓰러집니다"
-              category="INPUT HELL"
-              categoryColor={SECTION_COLORS.input}
-              difficulty={4}
-              points={400}
-            >
-              <PhysicsEmail onComplete={() => handleComplete('물리 엔진 이메일', 400)} />
-            </ChallengeCard>
-
-            <ChallengeCard
-              id="password-cham"
-              title="패스워드 참참참"
-              subtitle="참참참 게임에서 이겨야 다음 글자를 입력할 수 있습니다 — 지면 이전 글자가 랜덤하게 바뀝니다"
-              category="INPUT HELL"
-              categoryColor={SECTION_COLORS.input}
-              difficulty={3}
-              points={300}
-            >
-              <PasswordCham onComplete={() => handleComplete('패스워드 참참참', 300)} />
-            </ChallengeCard>
-
-            <ChallengeCard
-              id="robot-captcha"
-              title="캡차의 역습"
-              subtitle='"저는 로봇이 아닙니다" 체크 → 지금 기분을 500자 이상 서술 → AI가 진정성 심사'
-              category="INPUT HELL"
-              categoryColor={SECTION_COLORS.input}
-              difficulty={5}
-              points={500}
-            >
-              <RobotCaptcha onComplete={() => handleComplete('캡차의 역습', 500)} />
-            </ChallengeCard>
-          </div>
-        </section>
-
-        <div className="section-divider" />
-
-        {/* ─── 섹션 2: 정밀도 테스트 ─── */}
-        <section>
-          <SectionHeader
-            num="02"
-            title="정밀도 테스트"
-            subtitle="Precision Tasks — 클릭 하나가 이렇게 어려울 줄이야"
-            color={SECTION_COLORS.precision}
-            icon="🎯"
-          />
-          <div className="space-y-2">
-            <ChallengeCard
-              id="escape-button"
-              title="도망가는 확인 버튼"
-              subtitle="가까이 갈수록 빠르게 도망 · 투명해짐 · 영역 이탈 시 랜덤 이동"
-              category="PRECISION"
-              categoryColor={SECTION_COLORS.precision}
-              difficulty={4}
-              points={400}
-            >
-              <EscapeButton onComplete={() => handleComplete('도망가는 버튼', 400)} />
-            </ChallengeCard>
-
-            <ChallengeCard
-              id="timing-button"
-              title="타이밍 버튼"
-              subtitle="가짜 구간 함정 · 미스 3번 리셋 · 성공할수록 빨라짐 — 5번 성공하면 완료"
-              category="PRECISION"
-              categoryColor={SECTION_COLORS.precision}
-              difficulty={3}
-              points={300}
-            >
-              <TimingButton onComplete={() => handleComplete('타이밍 버튼', 300)} />
-            </ChallengeCard>
-            <ChallengeCard
-              id="inertia-scroll"
-              title="마찰력 제로 관성 스크롤"
-              subtitle="마찰력이 전혀 없습니다. 살짝만 굴려도 끝까지 날아갑니다. 맨 아래에서 2초간 멈춰보세요."
-              category="PRECISION"
-              categoryColor={SECTION_COLORS.precision}
-              difficulty={3}
-              points={300}
-            >
-              <InertiaScroll onComplete={() => handleComplete('관성 스크롤', 300)} />
-            </ChallengeCard>
-
-            <ChallengeCard
-              id="weight-ui"
-              title="무게 중심 UI"
-              subtitle="커서가 움직이면 모든 버튼이 그쪽으로 쏠려 겹칩니다 — 노란 버튼을 7번 클릭하세요"
-              category="PRECISION"
-              categoryColor={SECTION_COLORS.precision}
-              difficulty={2}
-              points={200}
-            >
-              <WeightUI onComplete={() => handleComplete('무게 중심 UI', 200)} />
-            </ChallengeCard>
-
-            <ChallengeCard
-              id="balloon-button"
-              title="풍선 버튼"
-              subtitle="모든 버튼이 헬륨 풍선처럼 위로 떠오릅니다 — 탈출 전에 낚아채세요. 놓치면 5초 후 재등장"
-              category="PRECISION"
-              categoryColor={SECTION_COLORS.precision}
-              difficulty={3}
-              points={300}
-            >
-              <BalloonButton onComplete={() => handleComplete('풍선 버튼', 300)} />
-            </ChallengeCard>
-          </div>
-        </section>
-
-        <div className="section-divider" />
-
-        {/* ─── 섹션 3: 심리적 압박 ─── */}
-        <section>
-          <SectionHeader
-            num="03"
-            title="심리적 압박"
-            subtitle="Psychological War — 당신의 멘탈을 공격합니다"
-            color={SECTION_COLORS.psych}
-            icon="😤"
-          />
-          <div className="space-y-2">
-            <ChallengeCard
-              id="begging-popup"
-              title="조건부 팝업"
-              subtitle="'예' 클릭 시 가짜 진행 바 역주행 · 3단계 확인 팝업 · 아니오 버튼 멘트 변경"
-              category="PSYCH WAR"
-              categoryColor={SECTION_COLORS.psych}
-              difficulty={3}
-              points={300}
-            >
-              <BeggingPopup onComplete={() => handleComplete('조건부 팝업', 300)} />
-            </ChallengeCard>
-
-            <ChallengeCard
-              id="slow-loading"
-              title="느릿느릿 로딩바"
-              subtitle="99%에서 멈추고 처음부터 다시 하라고 합니다 — 10초 버티면 완료"
-              category="PSYCH WAR"
-              categoryColor={SECTION_COLORS.psych}
-              difficulty={4}
-              points={400}
-            >
-              <SlowLoadingBar onComplete={() => handleComplete('느릿느릿 로딩바', 400)} />
-            </ChallengeCard>
-
-            <ChallengeCard
-              id="typing-ai"
-              title="AI 채팅 상담사의 오타"
-              subtitle="AI가 오타를 내고 백스페이스로 지우는 걸 지켜보세요"
-              category="PSYCH WAR"
-              categoryColor={SECTION_COLORS.psych}
-              difficulty={1}
-              points={100}
-            >
-              <TypingAI onComplete={() => handleComplete('AI 채팅 상담사', 100)} />
-            </ChallengeCard>
-          </div>
-        </section>
-
-        <div className="section-divider" />
-
-        {/* ─── 섹션 4: 시각적 혼란 ─── */}
-        <section>
-          <SectionHeader
-            num="04"
-            title="시각적 혼란"
-            subtitle="Visual Chaos — 눈이 혼란스러워집니다"
-            color={SECTION_COLORS.visual}
-            icon="👁"
-          />
-          <div className="space-y-2">
-            <ChallengeCard
-              id="chaos-theme"
-              title="다크/라이트 모드 무작위 전환"
-              subtitle="마우스 속도에 따라 테마가 미친 듯이 바뀝니다 — 20회 달성 시 완료"
-              category="VISUAL CHAOS"
-              categoryColor={SECTION_COLORS.visual}
-              difficulty={3}
-              points={300}
-            >
-              <ChaosTheme onComplete={() => handleComplete('카오스 테마', 300)} />
-            </ChallengeCard>
-
-            <ChallengeCard
-              id="inverted-scroll"
-              title="스크롤 방향 반전"
-              subtitle="위로 올리면 아래로, 중간에 방향이 바뀝니다 — 끝까지 스크롤하면 완료"
-              category="VISUAL CHAOS"
-              categoryColor={SECTION_COLORS.visual}
-              difficulty={2}
-              points={200}
-            >
-              <InvertedScroll onComplete={() => handleComplete('반전 스크롤', 200)} />
-            </ChallengeCard>
-
-            <ChallengeCard
-              id="font-size-hell"
-              title="조건부 폰트 크기"
-              subtitle="입력 중: 2px로 안 보임 | 커서 빼면: 72px로 화면 가림 — 입력한 내용을 실시간으로 확인 불가"
-              category="VISUAL CHAOS"
-              categoryColor={SECTION_COLORS.visual}
-              difficulty={3}
-              points={300}
-            >
-              <FontSizeHell onComplete={() => handleComplete('조건부 폰트 크기', 300)} />
-            </ChallengeCard>
-
-            <ChallengeCard
-              id="low-res-terms"
-              title="저해상도 모드 강제"
-              subtitle="중요한 약관이 8비트 픽셀 아트로 표시됩니다 — 단계마다 해상도가 낮아져 읽기 불가"
-              category="VISUAL CHAOS"
-              categoryColor={SECTION_COLORS.visual}
-              difficulty={3}
-              points={300}
-            >
-              <LowResTerms onComplete={() => handleComplete('저해상도 약관', 300)} />
-            </ChallengeCard>
-          </div>
-        </section>
-
-        <div className="section-divider" />
-
-        {/* ─── 섹션 5: 피드백 왜곡 ─── */}
-        <section>
-          <SectionHeader
-            num="05"
-            title="피드백 왜곡"
-            subtitle="Feedback Distortion — 입력한 값을 믿을 수 없습니다"
-            color={SECTION_COLORS.feedback}
-            icon="🔀"
-          />
-          <div className="space-y-2">
-            <ChallengeCard
-              id="slow-input"
-              title="점점 느려지는 입력"
-              subtitle="글자가 늘어날수록 딜레이가 기하급수적으로 증가합니다"
-              category="FEEDBACK"
-              categoryColor={SECTION_COLORS.feedback}
-              difficulty={3}
-              points={300}
-            >
-              <SlowInput onComplete={() => handleComplete('점점 느려지는 입력', 300)} />
-            </ChallengeCard>
-
-            <ChallengeCard
-              id="distorted-input"
-              title="입력값 변형"
-              subtitle="입력한 값이 변형되어 표시됩니다. 신뢰성 붕괴 — 3번 제출하면 완료"
-              category="FEEDBACK"
-              categoryColor={SECTION_COLORS.feedback}
-              difficulty={2}
-              points={200}
-            >
-              <DistortedInput onComplete={() => handleComplete('입력값 변형', 200)} />
-            </ChallengeCard>
-          </div>
-        </section>
+        {CHALLENGE_SECTIONS.map((section, sIdx) => (
+          <Fragment key={section.num}>
+            {sIdx > 0 && <div className="section-divider" />}
+            <section>
+              <SectionHeader
+                num={section.num}
+                title={section.title}
+                subtitle={section.subtitle}
+                color={section.color}
+                icon={section.icon}
+              />
+              <div className="space-y-2">
+                {section.challenges.map(({ id, title, toastName, subtitle, category, difficulty, points, Component }) => (
+                  <ChallengeCard
+                    key={id}
+                    id={id}
+                    title={title}
+                    subtitle={subtitle}
+                    category={category}
+                    categoryColor={section.color}
+                    difficulty={difficulty}
+                    points={points}
+                  >
+                    <Component onComplete={() => handleComplete(toastName, points)} />
+                  </ChallengeCard>
+                ))}
+              </div>
+            </section>
+          </Fragment>
+        ))}
 
         {/* ─── 최종 점수판 ─── */}
         <motion.section

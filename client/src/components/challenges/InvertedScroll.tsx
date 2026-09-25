@@ -59,7 +59,7 @@ export default function InvertedScroll({ onComplete }: Props) {
       // 맨 아래까지 스크롤하면 완료
       if (newScroll >= maxScroll.current - 5 && !completed) {
         setCompleted(true);
-        addScore(250);
+        addScore(200);
         completeChallenge('inverted-scroll');
         onComplete?.();
       }

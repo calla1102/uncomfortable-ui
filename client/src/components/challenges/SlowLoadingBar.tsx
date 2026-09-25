@@ -222,7 +222,7 @@ export default function SlowLoadingBar({ onComplete }: Props) {
     setCompleted(true);
     setPhase('complete');
     setProgress(100);
-    addScore(600);
+    addScore(400);
     completeChallenge('slow-loading');
     onComplete?.();
   }, [completed, waitTime, clearAll, setPhase, addScore, completeChallenge, onComplete]);

@@ -128,7 +128,7 @@ export default function TypingAI({ onComplete }: { onComplete?: () => void }) {
     ]);
     if (isLast && !completedRef.current) {
       completedRef.current = true;
-      addScore(300);
+      addScore(100);
       completeChallenge('typing-ai');
       onComplete?.();
     }

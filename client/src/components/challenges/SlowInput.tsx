@@ -40,7 +40,7 @@ export default function SlowInput({ onComplete }: Props) {
       setDisplayText(val);
       if (val.length >= TARGET_LENGTH && !completed) {
         setCompleted(true);
-        addScore(400);
+        addScore(300);
         completeChallenge('slow-input');
         onComplete?.();
       }
@@ -64,7 +64,7 @@ export default function SlowInput({ onComplete }: Props) {
         setWaitProgress(0);
         if (val.length >= TARGET_LENGTH && !completed) {
           setCompleted(true);
-          addScore(400);
+          addScore(300);
           completeChallenge('slow-input');
           onComplete?.();
         }

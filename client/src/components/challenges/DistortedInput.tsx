@@ -69,7 +69,7 @@ export default function DistortedInput({ onComplete }: Props) {
     // 3번 제출하면 완료
     if (submitCount >= 2 && !completed) {
       setCompleted(true);
-      addScore(350);
+      addScore(200);
       completeChallenge('distorted-input');
       onComplete?.();
     }
